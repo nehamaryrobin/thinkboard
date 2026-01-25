@@ -1,12 +1,52 @@
-export function getAllNotes (req, res)  {
-    res.send('you got 10 notes');
+import Note from '../models/Note.js';   
+
+export async function getAllNotes (req, res)  {
+    try {
+        const notes = await Note.find().sort({ createdAt: -1 });
+        res.json(notes);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 }
-export function createNote (req, res)  {
-    res.status(201).json({message: 'note created successfully'});
+export async function createNote (req, res)  {
+    try {
+        const { title, content } = req.body;
+        const note = new Note({ title, content });
+        const savedNote = await note.save(); 
+        res.status(201).json(savedNote);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 } 
-export function updateNote (req, res)  {
-    res.status(200).json({message: 'note updated successfully'});
+export async function updateNote (req, res)  {
+    try {
+        const note = await Note.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!note) return res.status(404).json({ message: 'Note not found' });
+        res.status(200).json("Updated Sucessfully");
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 }
-export function deleteNote (req, res)  {
-    res.status(200).json({message: 'note deleted successfully'});
-}   
+
+//self
+export async function getNoteById (req, res) {
+    try {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+        res.json(note);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+export async function deleteNote (req, res)  {
+    try {
+        const note = await Note.findByIdAndDelete(req.params.id);
+        if (!note) return res.status(404).json({ message: 'Note not found' });
+        res.json({ message: 'Note deleted successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
