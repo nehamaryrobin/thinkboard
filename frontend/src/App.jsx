@@ -1,8 +1,19 @@
-export default function App() {
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage.jsx'
+import CreatePage from './pages/CreatePage.jsx'
+import NoteDetailPage from './pages/NoteDetailPage.jsx' 
+
+const App = () => {
   return (
-    <div>
-      <h1>Thinkboard - Notes App</h1>
-      <p>Welcome to Thinkboard!</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<HomePage/>}/>
+        <Route path='/create' element={<CreatePage/>}/>
+        <Route path='/note/:id' element={<NoteDetailPage/>}/>
+      </Routes>
+    </Router>
   )
 }
+
+export default App
